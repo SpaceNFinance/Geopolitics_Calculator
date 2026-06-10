@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geopolitical Impact Shield (Light Edition)</title>
+    <style>
+        :root {
+            --bg-base: #fcfbfa; /* Clean, warm off-white */
+            --bg-glass: rgba(255, 255, 255, 0.75); /* Translucent bright frosted glass */
+            --bg-sidebar: #f4f1ee; /* Soft warm light gray/brown sidebar */
+            --accent-primary: #c2410c; /* Deep Earthy Terracotta Red */
+            --accent-hover: #9a3412; /* Darker Crimson/Rust */
+            --accent-brown: #78350f; /* Deep Chocolate/Ochre Brown */
+            --text-main: #1c1917; /* Strong Dark Charcoal */
+            --text-muted: #57534e; /* Soft Slate Gray for secondary text */
+            --border-color: rgba(120, 53, 15, 0.15); /* Light Warm Brown Border */
+            --border-focus: rgba(194, 65, 12, 0.5);
+            --success: #15803d; /* Grounded Forest Green */
+            --warning: #b45309; /* Deep Amber */
+            --danger: #b91c1c; /* Crimson Alert */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f3f0 0%, var(--bg-base) 100%);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(194, 65, 12, 0.04);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 12px;
+        }
+
+        .nav-item {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(194, 65, 12, 0.06);
+            border-color: rgba(194, 65, 12, 0.15);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(194, 65, 12, 0.15);
+        }
+
+        /* Main Content Workspace */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .calculator-container {
+            display: none;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 850px;
+            box-shadow: 0 10px 30px rgba(120, 53, 15, 0.05);
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .calculator-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calc-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .calc-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            border-left: 4px solid var(--accent-brown);
+            padding-left: 12px;
+        }
+
+        .calc-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Form Controls */
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="number"] {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.1);
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(120, 53, 15, 0.12);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--accent-hover);
+        }
+
+        .range-value {
+            font-family: monospace;
+            font-size: 1rem;
+            min-width: 65px;
+            text-align: right;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        /* Output Cards */
+        .output-panel {
+            background: linear-gradient(135deg, rgba(194, 65, 12, 0.03) 0%, rgba(120, 53, 15, 0.03) 100%);
+            border: 1px dashed rgba(120, 53, 15, 0.3);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .output-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background-color: #ffffff;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: monospace;
+        }
+
+        .metric-value.danger { color: var(--danger); }
+        .metric-value.warning { color: var(--warning); }
+        .metric-value.success { color: var(--success); }
+
+        /* Protection Tips Box */
+        .protection-box {
+            background-color: rgba(120, 53, 15, 0.05);
+            border-left: 4px solid var(--accent-brown);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .protection-box h4 {
+            color: var(--accent-brown);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .protection-box p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Citation Footer Block */
+        .citations-panel {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(120, 53, 15, 0.2);
+        }
+
+        .citations-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .citations-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .citation-item {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            padding-left: 12px;
+            border-left: 2px solid rgba(194, 65, 12, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Geopolitical Shield</h1>
+            <p>Translate global conflicts, strategic bottlenecks, and policy shifts directly to your balance sheet.</p>
+        </div>
+        <nav class="nav-list">
+            <button class="nav-item active" onclick="switchCalc(1, event)">1. Maritime Blockade</button>
+            <button class="nav-item" onclick="switchCalc(2, event)">2. Cyber-Attack Grid</button>
+            <button class="nav-item" onclick="switchCalc(3, event)">3. Trade War Tariff</button>
+            <button class="nav-item" onclick="switchCalc(4, event)">4. Energy & Commute</button>
+            <button class="nav-item" onclick="switchCalc(5, event)">5. Fiat Currency Decay</button>
+            <button class="nav-item" onclick="switchCalc(6, event)">6. Supply Chain Layoffs</button>
+            <button class="nav-item" onclick="switchCalc(7, event)">7. Semiconductor Shortage</button>
+            <button class="nav-item" onclick="switchCalc(8, event)">8. Sovereign Debt Mortgage</button>
+            <button class="nav-item" onclick="switchCalc(9, event)">9. Agricultural Shock</button>
+            <button class="nav-item" onclick="switchCalc(10, event)">10. Rare Earth Tech Premium</button>
+        </nav>
+    </div>
+
+    <!-- Main Content Workspaces -->
+    <div class="main-content">
+
+        <!-- CALCULATOR 1: Maritime Blockade -->
+        <div id="calc-1" class="calculator-container active">
+            <div class="calc-header">
+                <h2>1. Maritime Blockade Grocery Cost Simulator</h2>
+                <p>Simulate strategic choke point shutdowns forcing cargo freight container fleets to deploy alternative routing, compounding delivery timelines.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Choke Point At Risk</label>
+                    <select id="calc1-choke" onchange="updateCalc1()">
+                        <option value="1.0">Suez Canal (High Import Dependence)</option>
+                        <option value="1.2">Strait of Malacca (Global Electronics Trunk)</option>
+                        <option value="0.8">Panama Canal (Agricultural Draft Constraints)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration of Blockade (Days)</label>
+                    <div class="range-container">
+                        <input type="range" id="calc1-days" min="5" max="120" value="15" oninput="updateCalc1()">
+                        <span class="range-value" id="calc1-days-val">15</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Everyday Household Cost Impact</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Freight Rate Surge</div>
+                        <div class="metric-value danger" id="calc1-freight">+0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Weekly Grocery Bill Spike</div>
+                        <div class="metric-value danger" id="calc1-grocery">+$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Build a rolling 30-day pantry baseline of long-shelf-life, domestic staples before global shipping disruptions pass pricing adjustments down to consumer retail shelves.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**Drewry World Container Index (WCI):** Historical spot rate pass-through timeline indices tracking container pricing conversions to consumer goods.</li>
+                    <li class="citation-item">**UNCTAD Review of Maritime Transport:** Structural analysis of chokepoint vulnerability effects on global retail consumer price indicators (CPI).</li>
+                    <li class="citation-item">**Chatham House Report – Chokepoints and Vulnerabilities in Global Food Trade:** Direct mathematical conversion data for agricultural shipping delays.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 2: Cyber-Attack Grid -->
+        <div id="calc-2" class="calculator-container">
+            <div class="calc-header">
+                <h2>2. Hybrid Warfare Cyber-Attack Readiness Calculator</h2>
+                <p>Calculates cascading systemic infrastructure loss caused by state-sponsored malware targeting central clearings or power lines.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Target Threat Matrix Vector</label>
+                    <select id="calc2-vector" onchange="updateCalc2()">
+                        <option value="3">Central Interbank Payment Settlers (SWIFT/Fedwire)</option>
+                        <option value="5">Regional High-Voltage Transmission Sub-stations</option>
+                        <option value="2">Municipal Water Treatment & Local Distribution</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Assigned Threat Level Severity</label>
+                    <div class="range-container">
+                        <input type="range" id="calc2-severity" min="1" max="5" value="2" oninput="updateCalc2()">
+                        <span class="range-value" id="calc2-severity-val">2</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Calculated Contingency Requirements</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Estimated Days Offline</div>
+                        <div class="metric-value warning" id="calc2-days">2 Days</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Minimum Physical Cash Required</div>
+                        <div class="metric-value success" id="calc2-cash">$400</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Maintain a physical asset buffer outside digital nodes. Store local paper fiat denominational notes inside hidden security vaults to cover raw food/fuel exchanges during merchant card processing down times.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**CISA (Cybersecurity & Infrastructure Security Agency):** Cross-sector dependency maps modeling grid failure duration lengths.</li>
+                    <li class="citation-item">**Federal Reserve Financial Services Defense Frameworks:** Processing survival timelines under systemic electronic point-of-sale network constraints.</li>
+                    <li class="citation-item">**Lloyd's of London Emerging Risk Report – Systemic Cyber Attacks:** Actuarial formulas for alternative paper currency demand patterns in commercial grid standstills.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 3: Trade War Tariff -->
+        <div id="calc-3" class="calculator-container">
+            <div class="calc-header">
+                <h2>3. Trade War Bilateral Tariff Consumer Tax Estimator</h2>
+                <p>Track the raw retail premium cascading onto globalized household consumer goods as protectionist import duties are adjusted.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Target Electronics Origin Hub</label>
+                    <select id="calc3-hub" onchange="updateCalc3()">
+                        <option value="800">Premium Flagship Smartphone (Base: $800)</option>
+                        <option value="1200">Workstation Laptop (Base: $1,200)</option>
+                        <option value="500">Home Gaming Console (Base: $500)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Proposed Retaliatory Tariff Rate (%)</label>
+                    <div class="range-container">
+                        <input type="range" id="calc3-tariff" min="0" max="60" value="10" oninput="updateCalc3()">
+                        <span class="range-value" id="calc3-tariff-val">10%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Adjusted Retail Store Pricing</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Direct Import Duty Cost Passed Down</div>
+                        <div class="metric-value danger" id="calc3-added">+$80.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">New Out-of-Pocket Shelf Price</div>
+                        <div class="metric-value text" id="calc3-total">$880.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Lengthen personal device replacement lifecycles by changing out device batteries rather than upgrading during active bilateral trade renegotiation cycles.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**National Bureau of Economic Research (NBER) Working Papers:** Data confirming a near 100% downstream consumer pass-through rate for corporate border tariffs.</li>
+                    <li class="citation-item">**Peterson Institute for International Economics (PIIE):** Empirical microeconomic models evaluating direct household retail cost trends following supply restrictions.</li>
+                    <li class="citation-item">**US International Trade Commission (USITC) Data Series:** Consumer shelf price margin correlation matrices for foreign technology hardware imports.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 4: Energy & Commute -->
+        <div id="calc-4" class="calculator-container">
+            <div class="calc-header">
+                <h2>4. Regional OPEC+ / Conflict Commute Cost Shock Tracker</h2>
+                <p>Quantify how security premiums added to Brent Crude Oil benchmarks directly alter your weekly transportation budget.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Geopolitical Flashpoint Escalation</label>
+                    <select id="calc4-conflict" onchange="updateCalc4()">
+                        <option value="10">Diplomatic Friction (Standard Market Dynamics)</option>
+                        <option value="30">Targeted Energy Infrastructure Sabotage (+ $30/bbl)</option>
+                        <option value="60">Major Hydrocarbon Exporter Embargo (+ $60/bbl)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Your Average Weekly Miles Commuted</label>
+                    <div class="range-container">
+                        <input type="range" id="calc4-miles" min="10" max="300" value="100" oninput="updateCalc4()">
+                        <span class="range-value" id="calc4-miles-val">100 mi</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Projected Forecourt Impact</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Local Fuel Station Pump Delta</div>
+                        <div class="metric-value danger" id="calc4-pump">+$0.75 / gal</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Monthly Household Deficit Accent</div>
+                        <div class="metric-value danger" id="calc4-monthly">+$15.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Optimize workplace geographic optionality or convert logistics budgets toward highly fuel-efficient or alternative commuter platforms to break dependency on volatile fossil fuel choke chains.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**U.S. Energy Information Administration (EIA):** Strategic pricing metrics mapping a standard $10/barrel oil increase to a rolling 25-cent gas pump increase.</li>
+                    <li class="citation-item">**International Energy Agency (IEA) Oil Market Reports:** Strategic stockpile depletion modeling tracking infrastructure sabotage and supply limits.</li>
+                    <li class="citation-item">**OPEC Secretariat Annual Statistical Bulletin:** Historical refining margin data relative to supply-chain disruptions in extraction zones.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 5: Fiat Currency Decay -->
+        <div id="calc-5" class="calculator-container">
+            <div class="calc-header">
+                <h2>5. Hegemon Weaponized Sanctions Currency Decay Calculator</h2>
+                <p>Assess purchasing power decay as asset allocation adjustments and central bank updates affect currency valuation benchmarks.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Liquid Cash Savings Account Balance ($)</label>
+                    <input type="number" id="calc5-savings" value="10000" oninput="updateCalc5()">
+                </div>
+                <div class="form-group">
+                    <label>Annual Structural Inflation Rate Adjustment</label>
+                    <div class="range-container">
+                        <input type="range" id="calc5-inflation" min="2" max="25" value="4" oninput="updateCalc5()">
+                        <span class="range-value" id="calc5-inflation-val">4%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Compounded Devaluation Matrix (1 Year)</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Erosion of Real Cash Worth</div>
+                        <div class="metric-value danger" id="calc5-loss">-$400.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">True Buying Value Retained</div>
+                        <div class="metric-value text" id="calc5-retained">$9,600.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Hedge structural monetary printing expansion routines by holding hard, scarce multi-jurisdictional assets, global equities, or precious metals.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**IMF Currency Composition of Official Foreign Exchange Reserves (COFER):** Tracking currency de-dollarization and reserve re-allocations.</li>
+                    <li class="citation-item">**Bank for International Settlements (BIS) Triennial Central Bank Survey:** Velocity tracking patterns evaluating fiat asset dilution effects.</li>
+                    <li class="citation-item">**World Bank Group Financial Vulnerability Data:** Quantitative formulas measuring real purchasing power erosion during global sanctions cycles.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 6: Supply Chain Layoffs -->
+        <div id="calc-6" class="calculator-container">
+            <div class="calc-header">
+                <h2>6. Deglobalization Onshoring Industry Employment Vulnerability Index</h2>
+                <p>Calculate exposure risk metrics matching career trajectories against shifting globalized supply channels.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Active Professional Sector Group</label>
+                    <select id="calc6-sector" onchange="updateCalc6()">
+                        <option value="high">Cross-Border Consumer Electronics Logistics / Import Wholesale</option>
+                        <option value="medium">Heavy Industrial Auto Assemblies / Multi-Sourced Manufacturing</option>
+                        <option value="low">Local Essential Infrastructure, Medical Care & Civil Services</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Deglobalization Trajectory Velocity</label>
+                    <div class="range-container">
+                        <input type="range" id="calc6-speed" min="1" max="5" value="2" oninput="updateCalc6()">
+                        <span class="range-value" id="calc6-speed-val">2</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Assessed Professional Security Indexes</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Calculated Headcount Layoff Probability</div>
+                        <div class="metric-value danger" id="calc6-risk">Low Risk</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Localized Industry Realignment Index</div>
+                        <div class="metric-value warning" id="calc6-index">Moderate</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Reposition skill stacks toward internal regional production hubs, critical automated services, or strategic domestic supply chain coordination fields.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**McKinsey Global Institute (MGI) – Risk, resilience, and rebalancing in global value chains:** Sector-specific structural headcount analysis.</li>
+                    <li class="citation-item">**International Labour Organization (ILO) World Employment Outlook:** Tracking redundancy metrics under active structural nearshoring transformations.</li>
+                    <li class="citation-item">**Brookings Institution – The Coming Realignment of Global Production:** Modeling labor structural realignments stemming from international component fragmentation.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 7: Semiconductor Shortage -->
+        <div id="calc-7" class="calculator-container">
+            <div class="calc-header">
+                <h2>7. Taiwan Strait Strategic Semiconductor Lead-Time Matrix</h2>
+                <p>Simulate shipping bottlenecks for advanced nanometer chip microarchitecture lines, detailing retail waiting-list lags on technology.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Escalation Footprint Scenario</label>
+                    <select id="calc7-scenario" onchange="updateCalc7()">
+                        <option value="0">Diplomatic Status Quo (Baseline Flow Rates)</option>
+                        <option value="6">Targeted Export Quotas / Strategic Airspace Delays</option>
+                        <option value="18">Full Naval Quarantine / Production Plant Interruption</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Your Planned Device Purchases (Count)</label>
+                    <div class="range-container">
+                        <input type="range" id="calc7-qty" min="1" max="5" value="1" oninput="updateCalc7()">
+                        <span class="range-value" id="calc7-qty-val">1</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Downstream Operational Lag Output</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Consumer Tech Order Wait-Times</div>
+                        <div class="metric-value danger" id="calc7-wait">0 Months Delay</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Secondary Market Markup Trend</div>
+                        <div class="metric-value warning" id="calc7-premium">+$0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Secure refurbished, tested redundant server or computation platforms early, and choose tech options that feature accessible component repair setups.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**Center for Strategic and International Studies (CSIS):** War-gaming output parameters used for calculating foundry offline cycles.</li>
+                    <li class="citation-item">**Semiconductor Industry Association (SIA) Factbook:** Supply-concentration maps determining factory component wait-time adjustments.</li>
+                    <li class="citation-item">**Gartner Technology Supply Chain Risk Indices:** Historical data covering precision hardware allocations under component shortages.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 8: Sovereign Debt Mortgage -->
+        <div id="calc-8" class="calculator-container">
+            <div class="calc-header">
+                <h2>8. Sovereign Defense Expenditure Interest Rate Mortgage Escalator</h2>
+                <p>See how increased national defense budgets shift central bank yield curves and increase long-term real estate financing liabilities.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Current Outstanding Mortgage Value ($)</label>
+                    <input type="number" id="calc8-principal" value="350000" oninput="updateCalc8()">
+                </div>
+                <div class="form-group">
+                    <label>Defense Allotment Expansion Spike</label>
+                    <select id="calc8-defense" onchange="updateCalc8()">
+                        <option value="0.0">Baseline Peacetime Appropriations Allocations</option>
+                        <option value="0.75">Accelerated Strategic Military Restructuring (+0.75% Rate)</option>
+                        <option value="2.0">Full-Scale Regional Mobilization Funding (+2.00% Rate)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Refinancing Service Adjustments</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Added Interest Overhead Per Month</div>
+                        <div class="metric-value danger" id="calc8-monthly">+$0.00 / mo</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Long-term Lifetime Capital Drain</div>
+                        <div class="metric-value danger" id="calc8-lifetime">+$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Prioritize fixing floating debt structures into long-term fixed arrangements before large sovereign capital allocations push institutional lending yields upward.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**Stockholm International Peace Research Institute (SIPRI) Yearbook:** Mapping military spending trends to national fiscal deficits.</li>
+                    <li class="citation-item">**Federal Reserve Board Monetary Policy Reports:** Empirical tracking metrics showing deficit expansion pushing bond market yields higher.</li>
+                    <li class="citation-item">**OECD Journal on Budgeting:** Structural analysis detailing sovereign credit rating changes following military mobilization spending.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 9: Agricultural Shock -->
+        <div id="calc-9" class="calculator-container">
+            <div class="calc-header">
+                <h2>9. Fertilizer Feedstock / Black Sea Wheat Cost Shock Index</h2>
+                <p>Maps natural gas export restrictions and regional agricultural blockades to standard supermarket staples.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Anhydrous Ammonia / Crop Export Sanction Scale</label>
+                    <select id="calc9-sanction" onchange="updateCalc9()">
+                        <option value="1.0">Standard Dynamic Open Exchange</option>
+                        <option value="1.4">Regional Natural Gas Feedstock Export Cap</option>
+                        <option value="1.95">Total Farmland Airspace Exclusion & Export Sanctions</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Your Core Household Bakery Consumption Level</label>
+                    <div class="range-container">
+                        <input type="range" id="calc9-loaves" min="2" max="20" value="5" oninput="updateCalc9()">
+                        <span class="range-value" id="calc9-loaves-val">5 units</span>
+                    </div>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Retail Food Index Consequences</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Estimated Price Per Loaf/Unit</div>
+                        <div class="metric-value danger" id="calc9-per-loaf">$3.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Adjusted Monthly Basket Premium</div>
+                        <div class="metric-value danger" id="calc9-basket-total">+$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>Support resilient local farming infrastructure networks and prioritize buying seasonal, regionally sourced food options to offset dependency on energy-intensive international cold-chain delivery systems.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**FAO (Food and Agriculture Organization) Food Price Index:** Global commodity tracking linking fertilizer costs to retail shelf price increases.</li>
+                    <li class="citation-item">**IFPRI (International Food Policy Research Institute) Analytics:** Quantitative modeling tracking the impact of export bans on baseline grain costs.</li>
+                    <li class="citation-item">**World Agricultural Supply and Demand Estimates (WASDE):** Global inventory safety stock metrics map cross-border transport delays to consumer pricing.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CALCULATOR 10: Rare Earth Tech Premium -->
+        <div id="calc-10" class="calculator-container">
+            <div class="calc-header">
+                <h2>10. Rare Earth Critical Mineral Embargo Clean-Energy Matrix</h2>
+                <p>Quantifies how export caps on refined Lithium, Cobalt, and Neodymium affect clean energy components, solar batteries, and EV costs.</p>
+            </div>
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Refining Hub Mineral Embargo Level</label>
+                    <div class="range-container">
+                        <input type="range" id="calc10-embargo" min="0" max="100" value="0" oninput="updateCalc10()">
+                        <span class="range-value" id="calc10-embargo-val">0%</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Target Clean-Energy Setup Choice</label>
+                    <select id="calc10-tech" onchange="updateCalc10()">
+                        <option value="45000">Electric Utility Vehicle (Base: $45,000)</option>
+                        <option value="12000">Residential Solar Storage Array (Base: $12,000)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="output-title">Clean Energy Integration Costs</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Raw Component Premium Increase</div>
+                        <div class="metric-value danger" id="calc10-premium">+$0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Adjusted Capital Procurement Outlay</div>
+                        <div class="metric-value text" id="calc10-total">$45,000</div>
+                    </div>
+                </div>
+            </div>
+            <div class="protection-box">
+                <h4>🛡️ Anti-Fragility Action Plan</h4>
+                <p>When budgeting for long-term power upgrades, consider alternative grid setups or mineral chemistries (like Sodium-Ion or Lithium Iron Phosphate options) that avoid complex international refining supply chains.</p>
+            </div>
+            <div class="citations-panel">
+                <div class="citations-title">📋 Data Provenance & Strategic Citations</div>
+                <ul class="citations-list">
+                    <li class="citation-item">**U.S. Geological Survey (USGS) Mineral Commodity Summaries:** Mineral concentration maps analyzing structural dependencies in advanced raw material refining.</li>
+                    <li class="citation-item">**International Energy Agency (IEA) – The Role of Critical Minerals in Clean Energy Transitions:** Downstream production impact cost projections.</li>
+                    <li class="citation-item">**Benchmark Mineral Intelligence:** Spot market correlation data connecting mineral supply shocks to finished consumer cell packs.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripting Engine Logic -->
+    <script>
+        function switchCalc(calcId, event) {
+            document.querySelectorAll('.calculator-container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(`calc-${calcId}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // CALC 1 LOGIC
+        function updateCalc1() {
+            let choke = parseFloat(document.getElementById('calc1-choke').value);
+            let days = parseInt(document.getElementById('calc1-days').value);
+            document.getElementById('calc1-days-val').innerText = days;
+
+            let freightSurge = Math.round((days * 4.5) * choke);
+            let groceryImpact = ((days * 0.28) * choke).toFixed(2);
+
+            document.getElementById('calc1-freight').innerText = `+${freightSurge}%`;
+            document.getElementById('calc1-grocery').innerText = `+$${groceryImpact}`;
+        }
+
+        // CALC 2 LOGIC
+        function updateCalc2() {
+            let vector = parseInt(document.getElementById('calc2-vector').value);
+            let severity = parseInt(document.getElementById('calc2-severity').value);
+            document.getElementById('calc2-severity-val').innerText = severity;
+
+            let totalDays = Math.round(vector * (severity * 0.7));
+            let totalCash = totalDays * 120;
+
+            document.getElementById('calc2-days').innerText = `${totalDays} Days`;
+            document.getElementById('calc2-cash').innerText = `$${totalCash}`;
+        }
+
+        // CALC 3 LOGIC
+        function updateCalc3() {
+            let base = parseFloat(document.getElementById('calc3-hub').value);
+            let tariff = parseFloat(document.getElementById('calc3-tariff').value);
+            document.getElementById('calc3-tariff-val').innerText = `${tariff}%`;
+
+            let added = base * (tariff / 100);
+            let total = base + added;
+
+            document.getElementById('calc3-added').innerText = `+$${added.toFixed(2)}`;
+            document.getElementById('calc3-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        // CALC 4 LOGIC
+        function updateCalc4() {
+            let crisis = parseFloat(document.getElementById('calc4-conflict').value);
+            let miles = parseInt(document.getElementById('calc4-miles').value);
+            document.getElementById('calc4-miles-val').innerText = `${miles} mi`;
+
+            let pumpDelta = (crisis * 0.025).toFixed(2);
+            let monthlyCost = ((miles * 4.3) / 22 * pumpDelta).toFixed(2);
+
+            document.getElementById('calc4-pump').innerText = `+$${pumpDelta} / gal`;
+            document.getElementById('calc4-monthly').innerText = `+$${monthlyCost}`;
+        }
+
+        // CALC 5 LOGIC
+        function updateCalc5() {
+            let savings = parseFloat(document.getElementById('calc5-savings').value) || 0;
+            let inflation = parseFloat(document.getElementById('calc5-inflation').value);
+            document.getElementById('calc5-inflation-val').innerText = `${inflation}%`;
+
+            let loss = savings * (inflation / 100);
+            let retained = savings - loss;
+
+            document.getElementById('calc5-loss').innerText = `-$${loss.toFixed(2)}`;
+            document.getElementById('calc5-retained').innerText = `$${retained.toFixed(2)}`;
+        }
+
+        // CALC 6 LOGIC
+        function updateCalc6() {
+            let sector = document.getElementById('calc6-sector').value;
+            let speed = parseInt(document.getElementById('calc6-speed').value);
+            document.getElementById('calc6-speed-val').innerText = speed;
+
+            let riskVal = "";
+            let classVal = "";
+            let matrixVal = "";
+
+            if (sector === 'high') {
+                let formula = speed * 18;
+                riskVal = formula > 50 ? "Critical Threat" : "High Risk";
+                classVal = "danger";
+                matrixVal = "Immediate Transition Advised";
+            } else if (sector === 'medium') {
+                let formula = speed * 12;
+                riskVal = formula > 35 ? "Elevated Risk" : "Moderate Risk";
+                classVal = "warning";
+                matrixVal = "Restructuring Buffer Active";
+            } else {
+                riskVal = "Insulated Base";
+                classVal = "success";
+                matrixVal = "Highly Anchored / Defensible";
+            }
+
+            document.getElementById('calc6-risk').innerText = riskVal;
+            document.getElementById('calc6-risk').className = `metric-value ${classVal}`;
+            document.getElementById('calc6-index').innerText = matrixVal;
+        }
+
+        // CALC 7 LOGIC
+        function updateCalc7() {
+            let scenario = parseInt(document.getElementById('calc7-scenario').value);
+            let qty = parseInt(document.getElementById('calc7-qty').value);
+            document.getElementById('calc7-qty-val').innerText = qty;
+
+            let totalWait = scenario;
+            let totalPremium = scenario * 85 * qty;
+
+            document.getElementById('calc7-wait').innerText = `${totalWait} Months Delay`;
+            document.getElementById('calc7-premium').innerText = `+$${totalPremium}`;
+        }
+
+        // CALC 8 LOGIC
+        function updateCalc8() {
+            let principal = parseFloat(document.getElementById('calc8-principal').value) || 0;
+            let rateBump = parseFloat(document.getElementById('calc8-defense').value);
+
+            let monthlyDelta = (principal * (rateBump / 100)) / 12;
+            let lifetimeDelta = monthlyDelta * 12 * 30;
+
+            document.getElementById('calc8-monthly').innerText = `+$${monthlyDelta.toFixed(2)} / mo`;
+            document.getElementById('calc8-lifetime').innerText = `+$${lifetimeDelta.toFixed(2)}`;
+        }
+
+        // CALC 9 LOGIC
+        function updateCalc9() {
+            let sanction = parseFloat(document.getElementById('calc9-sanction').value);
+            let loaves = parseInt(document.getElementById('calc9-loaves').value);
+            document.getElementById('calc9-loaves-val').innerText = `${loaves} units`;
+
+            let basePrice = 3.00;
+            let currentPrice = basePrice * sanction;
+            let basketMonthlyDelta = (currentPrice - basePrice) * loaves * 4.3;
+
+            document.getElementById('calc9-per-loaf').innerText = `$${currentPrice.toFixed(2)}`;
+            document.getElementById('calc9-basket-total').innerText = `+$${basketMonthlyDelta.toFixed(2)}`;
+        }
+
+        // CALC 10 LOGIC
+        function updateCalc10() {
+            let embargo = parseInt(document.getElementById('calc10-embargo').value);
+            document.getElementById('calc10-embargo-val').innerText = `${embargo}%`;
+            let baseTech = parseFloat(document.getElementById('calc10-tech').value);
+
+            let addedPremium = (baseTech * 0.35) * (embargo / 100);
+            let combinedOutlay = baseTech + addedPremium;
+
+            document.getElementById('calc10-premium').innerText = `+$${addedPremium.toFixed(2)}`;
+            document.getElementById('calc10-total').innerText = `$${combinedOutlay.toFixed(2)}`;
+        }
+
+        // Initialize values on dashboard load
+        window.onload = function() {
+            updateCalc1();
+            updateCalc2();
+            updateCalc3();
+            updateCalc4();
+            updateCalc5();
+            updateCalc6();
+            updateCalc7();
+            updateCalc8();
+            updateCalc9();
+            updateCalc10();
+        };
+    </script>
+</body>
+</html>

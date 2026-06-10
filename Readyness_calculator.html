@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resilience & Survival Readiness Matrix (Viewport Edition)</title>
+    <style>
+        :root {
+            --bg-base: #fcfbfa; 
+            --bg-glass: rgba(255, 255, 255, 0.85); 
+            --bg-sidebar: #f4f1ee; 
+            --accent-primary: #c2410c; 
+            --accent-hover: #9a3412; 
+            --accent-brown: #78350f; 
+            --text-main: #1c1917; 
+            --text-muted: #57534e; 
+            --border-color: rgba(120, 53, 15, 0.15); 
+            --border-focus: rgba(194, 65, 12, 0.5);
+            --success: #15803d; 
+            --warning: #b45309; 
+            --danger: #b91c1c; 
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f3f0 0%, var(--bg-base) 100%);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Lock viewport on desktop */
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                height: auto;
+                overflow: auto;
+                flex-direction: column;
+            }
+        }
+
+        /* Sidebar Infrastructure Context */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(194, 65, 12, 0.04);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .sidebar-scroll-content {
+            padding: 20px;
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* Reference Panel at bottom of sidebar to save main space */
+        .provenance-panel {
+            padding: 16px 20px;
+            background: rgba(120, 53, 15, 0.02);
+            border-top: 1px dashed rgba(120, 53, 15, 0.2);
+        }
+
+        .provenance-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .provenance-item {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+            margin-bottom: 6px;
+            padding-left: 8px;
+            border-left: 2px solid rgba(194, 65, 12, 0.3);
+        }
+
+        /* Main Workspace App Grid */
+        .main-workspace {
+            flex-grow: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            max-width: 1500px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Keeps individual columns scrolling if needed */
+        }
+
+        @media (max-width: 1150px) {
+            .main-workspace {
+                grid-template-columns: 1fr 300px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: auto;
+            }
+        }
+
+        /* Flex Columns inside Workspace */
+        .input-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 4px; /* Scrollbar spacer */
+        }
+
+        .telemetry-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Component Card Panels */
+        .card-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(120, 53, 15, 0.02);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            border-left: 4px solid var(--accent-brown);
+            padding-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Input Form Layout controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 640px) {
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.08);
+        }
+
+        /* Compact Survival Skills Checklist Sub-Matrix */
+        .skills-checklist {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 14px;
+            background: rgba(120, 53, 15, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .skills-checklist {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            accent-color: var(--accent-primary);
+            width: 14px;
+            height: 14px;
+            margin-top: 1px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-label span strong {
+            color: var(--accent-brown);
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .checkbox-label span .skill-desc {
+            color: var(--text-muted);
+            display: block;
+            font-size: 0.75rem;
+            margin-top: 1px;
+        }
+
+        /* Telemetry & Gauge Elements */
+        .gauge-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .gauge-svg {
+            width: 160px;
+            height: 160px;
+            transform: rotate(-90deg);
+        }
+
+        .gauge-track {
+            fill: none;
+            stroke: #f1ede9;
+            stroke-width: 12;
+        }
+
+        .gauge-body {
+            fill: none;
+            stroke: var(--accent-primary);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48; /* Based on r=90, container sizes handled via viewBox or scaled below */
+            transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+        }
+
+        .gauge-text-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            top: 36%;
+        }
+
+        .gauge-score {
+            font-size: 2.6rem;
+            font-weight: 800;
+            font-family: monospace;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .gauge-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Action Directives Layout Panel */
+        .advisory-panel {
+            background-color: rgba(120, 53, 15, 0.04);
+            border-left: 4px solid var(--accent-brown);
+            border-radius: 0 8px 8px 0;
+            padding: 16px;
+            flex-grow: 1; /* Maximizes footprint window space */
+            overflow-y: auto;
+        }
+
+        .advisory-panel h3 {
+            font-size: 0.8rem;
+            color: var(--accent-brown);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .suggestions-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .suggestions-list li {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .suggestions-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Resilience Engine</h1>
+            <p>Deconstruct structural, demographic, and tactical survival readiness parameters inside a single UI console layout.</p>
+        </div>
+        
+        <div class="sidebar-scroll-content">
+            <strong style="color: var(--text-main); display: block; margin-bottom: 4px; font-size: 0.75rem;">ALGORITHMIC VARIANCE MECHANICS:</strong>
+            <p style="margin-bottom: 10px;">• <strong>Maritime Inundations:</strong> Applies extreme penalties to accommodations located under 5 miles from high-tide boundaries.</p>
+            <p style="margin-bottom: 10px;">• <strong>Geopolitical Blocks:</strong> Weights your Jurisdictional Sovereign Stability level higher to evaluate national trade dependencies.</p>
+            <p>• <strong>CME / Solar Flare Events:</strong> Emphasizes unhardened infrastructure factors, prioritizing analog toolsets and localized off-grid configurations.</p>
+        </div>
+
+        <div class="provenance-panel">
+            <div class="provenance-title">📋 Tactical Analytics Reference</div>
+            <div class="provenance-item"><strong>USGS Coastal Vulnerability Index:</strong> Proximity hazard formulas.</div>
+            <div class="provenance-item"><strong>NOAA Space Weather Scales:</strong> Grid solar event metrics.</div>
+            <div class="provenance-item"><strong>UN Preparedness Protocols:</strong> Structural import tracking.</div>
+        </div>
+    </div>
+
+    <main class="main-workspace">
+        
+        <div class="input-column">
+            <section class="card-panel">
+                <h2 class="section-title">Risk Profile Vector Inputs</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="disaster-select">Disaster Playbook Scenario</label>
+                        <select id="disaster-select">
+                            <option value="cyber">Systemic Cyber Grid Collapse (EMP / Hostile Infrastructure Strike)</option>
+                            <option value="supply">Maritime Chokepoint Blockade & Global Supply Severance</option>
+                            <option value="fiat">Hyperinflationary Sovereign Fiat Currency Meltdown</option>
+                            <option value="kinetic">Kinetic Conflict Escalation / Closed Airspace Regional War</option>
+                            <option value="tsunami">Mega-Earthquake & Cascading Tsunami Hazard</option>
+                            <option value="cme">Solar Flare / Carrington-Class Coronal Mass Ejection (CME)</option>
+                            <option value="weather">Extreme Meteorological Shock (Supercell Grid Freeze / Flooding)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country-select">Sovereign Risk Profile</label>
+                        <select id="country-select">
+                            <option value="insulated" selected>Resource-Insulated / High Energy Base (e.g., US, Canada)</option>
+                            <option value="dependent">Import-Dependent Node (e.g., Western Europe, UK, Japan)</option>
+                            <option value="volatile">Flashpoint Zone / Fragmented Local Infrastructure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ocean-select">Distance From Coast / Ocean Lines</label>
+                        <select id="ocean-select">
+                            <option value="near">Immediate Coastline (Under 5 mi / High Exposure)</option>
+                            <option value="mid">Coastal Plain Matrix (5 to 50 mi)</option>
+                            <option value="inland" selected>Deep Inland Zone (50+ mi / High Elevation Elevation)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location-select">Geographic Demography</label>
+                        <select id="location-select">
+                            <option value="urban">Dense Urban Center (Extreme Interdependency)</option>
+                            <option value="suburban" selected>Suburban Sprawl Ring Network</option>
+                            <option value="rural">Rural / Isolated Micro-Enclave</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="housing-select">Shelter Configuration</label>
+                        <select id="housing-select">
+                            <option value="apartment">High-Rise Multi-Family Complex Apartment</option>
+                            <option value="house" selected>Single-Family Detached Residence (Yard-capable)</option>
+                            <option value="homestead">Off-Grid Outfitted Homestead Vector</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fitness-select">Functional Conditioning Metric</label>
+                        <select id="fitness-select">
+                            <option value="1">Sedentary Layout (Mobility Dependent)</option>
+                            <option value="2" selected>Moderate Fitness Base (Standard Mobility & Stamina)</option>
+                            <option value="3">High Capability Base (Functional Load-Carrying / Rucking)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="food-select">Emergency Nutrition Stockpiles</label>
+                        <select id="food-select">
+                            <option value="0">Just-In-Time Retail Sourcing (0 to 3 Days)</option>
+                            <option value="1">Short-Term Logistics Buffer (1 to 2 Weeks)</option>
+                            <option value="2">Medium-Term Structural Reserves (1 to 3 Months)</option>
+                            <option value="3">Strategic Insulation Allocation (3+ Months Stored)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Active Applied Emergency Survival Skill-Stack</label>
+                        <div class="skills-checklist">
+                            
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="growing"> 
+                                <span><strong>Food Cultivation</strong><span class="skill-desc">Permaculture, seed harvesting, high-yield container arrays.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="fire"> 
+                                <span><strong>Primitive Firecraft</strong><span class="skill-desc">Friction/spark extraction, damp fuel management.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="water"> 
+                                <span><strong>Hydrological Purification</strong><span class="skill-desc">Gravity filtration, chemical treatment methods.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="medical"> 
+                                <span><strong>Trauma Medicine</strong><span class="skill-desc">Tourniquets, TCCC protocols, field sanitation control.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="comms"> 
+                                <span><strong>Analog Communications</strong><span class="skill-desc">HF/VHF radio operations (Ham/GMRS), basic antenna design.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="power"> 
+                                <span><strong>Off-Grid Microgrids</strong><span class="skill-desc">Solar balancing, battery bank architecture, EMP isolation.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="foraging"> 
+                                <span><strong>Botanical Taxonomy</strong><span class="skill-desc">Regional edible/toxic flora categorization.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="mechanical"> 
+                                <span><strong>Mechanical Adaptation</strong><span class="skill-desc">Engine modification, field generator maintenance.</span></span>
+                            </label>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="skill-cb" value="security"> 
+                                <span><strong>Defensive Protocols</strong><span class="skill-desc">Perimeter hardening, early warning layout grids.</span></span>
+                            </label>
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="telemetry-column">
+            <section class="card-panel" style="padding: 16px;">
+                <h2 class="section-title" style="margin-bottom: 12px;">Readiness Index</h2>
+                
+                <div class="gauge-box">
+                    <svg class="gauge-svg" viewBox="0 0 200 200">
+                        <circle class="gauge-track" cx="100" cy="100" r="85"></circle>
+                        <circle id="gauge-progress" class="gauge-body" cx="100" cy="100" r="85"></circle>
+                    </svg>
+                    <div class="gauge-text-container">
+                        <div id="readiness-score" class="gauge-score">0</div>
+                        <div class="gauge-label">Score Rating</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="advisory-panel">
+                <h3>🛡️ Hardening Directives</h3>
+                <ul id="suggestions-output" class="suggestions-list">
+                    </ul>
+            </section>
+        </div>
+
+    </main>
+
+    <script>
+        const disasterSelect = document.getElementById('disaster-select');
+        const countrySelect = document.getElementById('country-select');
+        const oceanSelect = document.getElementById('ocean-select');
+        const locationSelect = document.getElementById('location-select');
+        const housingSelect = document.getElementById('housing-select');
+        const fitnessSelect = document.getElementById('fitness-select');
+        const foodSelect = document.getElementById('food-select');
+        const progressCircle = document.getElementById('gauge-progress');
+        const scoreText = document.getElementById('readiness-score');
+        const suggestionsOutput = document.getElementById('suggestions-output');
+
+        // Circular Gauge Radius Constant Definition (2 * PI * r) where r = 85
+        const CIRCUMFERENCE = 2 * Math.PI * 85;
+        progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+
+        function runResilienceCalculations() {
+            const disaster = disasterSelect.value;
+            const country = countrySelect.value;
+            const ocean = oceanSelect.value;
+            const location = locationSelect.value;
+            const housing = housingSelect.value;
+            const fitness = parseInt(fitnessSelect.value);
+            const food = parseInt(foodSelect.value);
+            
+            let checkedSkills = [];
+            document.querySelectorAll('.skill-cb:checked').forEach(cb => {
+                checkedSkills.push(cb.value);
+            });
+
+            let score = 0;
+
+            // Base Weight Allotments Matrix (Sum total always resolves to 100)
+            let weights = { country: 10, ocean: 10, location: 15, housing: 15, fitness: 10, food: 20, skills: 20 };
+
+            // Scenario Context Re-weighting Transformations
+            if (disaster === 'tsunami') {
+                weights = { country: 5, ocean: 35, location: 15, housing: 10, fitness: 10, food: 10, skills: 15 };
+            } else if (disaster === 'cme' || disaster === 'cyber') {
+                weights = { country: 5, ocean: 5, location: 20, housing: 20, fitness: 10, food: 15, skills: 25 };
+            } else if (disaster === 'fiat' || disaster === 'supply') {
+                weights = { country: 25, ocean: 5, location: 10, housing: 10, fitness: 10, food: 25, skills: 15 };
+            } else if (disaster === 'weather') {
+                weights = { country: 10, ocean: 10, location: 10, housing: 25, fitness: 10, food: 15, skills: 20 };
+            }
+
+            // 1. Country Calculations
+            if (country === 'insulated') score += weights.country;
+            else if (country === 'dependent') score += weights.country * 0.5;
+            else score += weights.country * 0.1;
+
+            // 2. Proximity Calculations
+            if (ocean === 'inland') score += weights.ocean;
+            else if (ocean === 'mid') score += weights.ocean * 0.6;
+            else { 
+                if (disaster === 'tsunami') score += weights.ocean * 0.0; // Complete failure for coastal tsunami risk
+                else score += weights.ocean * 0.3;
+            }
+
+            // 3. Demography Calculations
+            if (location === 'rural') score += weights.location;
+            else if (location === 'suburban') score += weights.location * 0.6;
+            else score += weights.location * 0.1; 
+
+            // 4. Housing Adaptations
+            if (housing === 'homestead') score += weights.housing;
+            else if (housing === 'house') score += weights.housing * 0.6;
+            else score += weights.housing * 0.2; 
+
+            // 5. Fitness Parameters
+            if (fitness === 3) score += weights.fitness;
+            else if (fitness === 2) score += weights.fitness * 0.6;
+            else score += weights.fitness * 0.1;
+
+            // 6. Food Buffers
+            if (food === 3) score += weights.food;
+            else if (food === 2) score += weights.food * 0.7;
+            else if (food === 1) score += weights.food * 0.3;
+            else score += weights.food * 0.0;
+
+            // 7. Skill Matrix Calculus
+            const maxSkillsPossible = 9;
+            let skillRatio = checkedSkills.length / maxSkillsPossible;
+            score += weights.skills * skillRatio;
+
+            // Format limits safely
+            let finalScore = Math.min(Math.round(score), 100);
+            scoreText.innerText = finalScore;
+            
+            // Adjust ring hex colors dynamically
+            if (finalScore >= 75) {
+                progressCircle.style.stroke = "var(--success)";
+            } else if (finalScore >= 45) {
+                progressCircle.style.stroke = "var(--warning)";
+            } else {
+                progressCircle.style.stroke = "var(--danger)";
+            }
+
+            // Calculate SVG Ring filling values
+            let strokeDashoffset = CIRCUMFERENCE - (finalScore / 100) * CIRCUMFERENCE;
+            progressCircle.style.strokeDashoffset = strokeDashoffset;
+
+            // Invoke directive text pipeline structures
+            generateDirectives(disaster, country, ocean, location, housing, fitness, food, checkedSkills);
+        }
+
+        function generateDirectives(disaster, country, ocean, location, housing, fitness, food, skills) {
+            suggestionsOutput.innerHTML = "";
+            let items = [];
+
+            // Base Resource Checks
+            if (food < 2) {
+                items.push("<strong>Nutrition Safety Limit:</strong> Your food buffer is critically narrow. Establish a 30-day baseline of vacuum-sealed proteins and bulk carbohydrates separate from grocery dependencies.");
+            }
+            if (!skills.includes('water')) {
+                items.push("<strong>Hydrological Asset Gap:</strong> Sourcing capability absent. Procure sub-micron physical gravity filters and identify emergency regional water points.");
+            }
+            if (!skills.includes('growing') && housing !== 'apartment') {
+                items.push("<strong>Caloric Sustainability Gap:</strong> Start cultivating micro-gardens or container soil arrays with non-hybrid heirloom varieties.");
+            }
+
+            // Explicit Environmental Hazards Mapping
+            if (disaster === 'tsunami' && ocean === 'near') {
+                items.push("<strong>Critical Proximity Alert:</strong> Active coastal displacement zone. Pre-map precise routes to terrain over 100 feet above sea level.");
+            }
+
+            if ((disaster === 'cme' || disaster === 'cyber') && !skills.includes('comms')) {
+                items.push("<strong>Electromagnetic Blackout Risk:</strong> Digital coordination channels will break. Integrate alternative analog setups like solar-recharged GMRS/Ham radio loops.");
+            }
+
+            if (disaster === 'fiat' && country === 'dependent') {
+                items.push("<strong>Sovereign Supply Vulnerability:</strong> Densely packed import-dependent zones undergo severe price spikes during monetary resets. Store physical bartering assets.");
+            }
+
+            if (!skills.includes('fire')) {
+                items.push("<strong>Thermal Craft Deficit:</strong> Practice alternative fire generation techniques using ferrocerium rods. Avoid dependency on matches/lighters during freezes.");
+            }
+
+            if (fitness === 1) {
+                items.push("<strong>Physical Mobility Limit:</strong> Build structural stamina. Focus on unassisted equipment transport and multi-mile cross-terrain navigation capability.");
+            }
+
+            if (items.length === 0) {
+                items.push("High-security preparedness verified. Rotate storage parameters and verify system lines quarterly.");
+            }
+
+            // Map and write nodes into display panels
+            items.forEach(text => {
+                let li = document.createElement('li');
+                li.innerHTML = text;
+                suggestionsOutput.appendChild(li);
+            });
+        }
+
+        // Initialize triggers across tracking items
+        document.querySelectorAll('select').forEach(el => el.addEventListener('change', runResilienceCalculations));
+        document.querySelectorAll('.skill-cb').forEach(el => el.addEventListener('change', runResilienceCalculations));
+
+        // Initial application setup invocation
+        runResilienceCalculations();
+    </script>
+</body>
+</html>
